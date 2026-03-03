@@ -27,7 +27,7 @@ const roles=[
  {id:"doctor",name:"Dcotor"} ,
   {id:"hospital-staff",name:"Staff"}
 ]
-const [role,setRole]=useState();
+const [role,setRole]=useState("Select User role");
 const handleLogin=async(email,password)=>{
 if(!email ||!password ||!role){
 alert("all fields are required");
@@ -124,9 +124,9 @@ setLoading(false);
                                 <label className={labelStyle}>role</label>
                                 <select required className={inputStyle}
                                     value={role}
-                                    onChange={e => setRole(e)}
+                                    onChange={e => setRole(e.target.value)}
                                 >
-                                    <option value="">Select User Role</option>
+                                    <option key="" value="">{role}</option>
                                     {roles.map(h => (
                                         <option key={h.id} value={h.id}>{h.name}</option>
                                     ))}

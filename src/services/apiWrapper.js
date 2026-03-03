@@ -5,7 +5,8 @@ try {
     const res=await axios({
         method,
         url:`${import.meta.env.VITE_BACKEND_URL}/${url}`,
-        data
+        data,
+        withCredentials: true 
     });
     return res;
     

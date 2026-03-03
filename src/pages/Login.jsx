@@ -44,7 +44,6 @@ try {
   else{
     alert("login failed");
   }
-
 } catch (error) {
   console.log(`${role} Login Error:`,error);
 }

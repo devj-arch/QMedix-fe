@@ -3,6 +3,7 @@ import { Mail, Eye, EyeOff, Loader2, KeyRound, Phone, User } from "lucide-react"
 import SocialAuth from "../components/SocialAuth";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import api from "../services/apiWrapper";
 const labelStyle =
   "block text-[10px] font-black text-blue-600/70 uppercase mb-2 tracking-widest ml-1";
 
@@ -20,27 +21,32 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate=useNavigate();
-
-
-const handleLogin=async(name,email,phone,password)=>{
-if(!email || !phone ||!password ||!name){
+const roles=[
+ { id:"patient", name:"Patient"},
+ {id:"hospital",name:"Hospital"} ,
+ {id:"doctor",name:"Dcotor"} ,
+  {id:"hospital-staff",name:"Staff"}
+]
+const [role,setRole]=useState();
+const handleLogin=async(email,password)=>{
+if(!email ||!password ||!role){
 alert("all fields are required");
 }
 try {
-  const res=await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/signup/patient`,{
-    name,
+  const res=await api("post",`auth/login/${role}`,{
     email,
-    phone,
     password
   })
   if(res.status=200 || res.status==201){
-  alert("signup done");
+  alert(`${role} Login done`);
   navigate("/");
-
+  }
+  else{
+    alert("login failed");
   }
 
 } catch (error) {
-  console.log("Login Error:",error);
+  console.log(`${role} Login Error:`,error);
 }
 setLoading(false);
 }
@@ -75,20 +81,7 @@ setLoading(false);
         }}
         className="space-y-6"
       >
-         <div>
-          <label className={labelStyle}>Name</label>
-          <div className="relative">
-            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              name="uname"
-              required
-              type="uname"
-              placeholder="e.g. Tarun"
-              className={inputStyle + " pl-11"}
-            />
-          </div>
-        </div>
-
+  
         <div>
           <label className={labelStyle}>Email Address</label>
           <div className="relative">
@@ -103,19 +96,6 @@ setLoading(false);
           </div>
         </div>
 
-         <div>
-          <label className={labelStyle}>Phone</label>
-          <div className="relative">
-            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              name="phone"
-              required
-              type="phone"
-              placeholder="92xxxxxxx"
-              className={inputStyle + " pl-11"}
-            />
-          </div>
-        </div>
 
         <div>
           <label className={labelStyle}>Password</label>
@@ -137,6 +117,21 @@ setLoading(false);
             </button>
           </div>
         </div>
+        
+
+        
+                            <div className="space-y-1">
+                                <label className={labelStyle}>role</label>
+                                <select required className={inputStyle}
+                                    value={role}
+                                    onChange={e => setRole(e)}
+                                >
+                                    <option value="">Select User Role</option>
+                                    {roles.map(h => (
+                                        <option key={h.id} value={h.id}>{h.name}</option>
+                                    ))}
+                                </select>
+                            </div>
 
         <button disabled={loading} className={buttonPrimary + " w-full mt-4"}>
           {loading ? <Loader2 className="animate-spin" /> : "Login to Dashboard"}

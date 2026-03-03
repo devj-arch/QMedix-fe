@@ -11,7 +11,7 @@ import {
     Loader2
 } from "lucide-react";
 import SocialAuth from "../components/SocialAuth";
-
+import api from "../services/apiWrapper";
 const labelStyle =
     "block text-[10px] font-black text-blue-600/70 dark:text-blue-400/70 uppercase mb-2 tracking-widest ml-1";
 
@@ -52,7 +52,124 @@ const Signup = ({ onRegister }) => {
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
     };
+    const handleSingup=async()=>{
+        if(role==='patient'){
+            handlePatientSignin();
+        }
+        else if(role==='doctor'){
+            handleDoctorSignin();
+        }
+        else if(role==='staff'){
+            handleStaffSignin();
+        }
+        
+    }
+const handlePatientSignin=async()=>{
+    setIsLoading(true);
+if(!data.email || !data.phone ||!data.password ||!data.fullName || !data.address){
+alert("all fields are required");
+}
+try {
+  const res=await api("post","auth/signup/patient",{
+    name:data.fullName,
+    email:data.email,
+    phone:data.phone,
+    password:data.password,
+    address:data.address
+  })
+  if(res.status=200 || res.status==201){
+  alert("Patient signup done");
+  navigate("/");
+  }
+else{
+    alert("Signup failed");
+}
+} catch (error) {
+  console.log("Patient Signup error, Error:",error);
+}
+setIsLoading(false);
+}
 
+const handleDoctorSignin=async()=>{
+    setIsLoading(true);
+if(!data.email || !data.phone ||!data.password ||!data.fullName || !data.address || !data.speciality){
+alert("all fields are required");
+}
+try {
+  const res=await api("post","auth/signup/doctor",{
+    name:data.fullName,
+    email:data.email,
+    phone:data.phone,
+    password:data.password,
+    address:data.address,
+    speciality:data.speciality,
+    hospital_id:data.hospital_id
+  })
+  if(res.status=200 || res.status==201){
+  alert("Doctor signup done");
+  navigate("/");
+  }
+else{
+    alert("Signup failed");
+}
+} catch (error) {
+  console.log("Doctor Signup error, Error:",error);
+}
+setIsLoading(false);
+}
+
+const handleHospitalSignin=async()=>{
+    setIsLoading(true);
+if(!data.email || !data.phone ||!data.password ||!data.fullName || !data.address){
+alert("all fields are required");
+}
+try {
+  const res=await api("post","auth/signup/hospital",{
+    name:data.fullName,
+    email:data.email,
+    phone:data.phone,
+    password:data.password,
+    address:data.address
+  })
+  if(res.status=200 || res.status==201){
+  alert("Hospital signup done");
+  navigate("/");
+  }
+else{
+    alert("Signup failed");
+}
+} catch (error) {
+  console.log("Hospital Signup error, Error:",error);
+}
+setIsLoading(false);
+}
+
+const handleStaffSignin=async()=>{
+    setIsLoading(true);
+if(!data.email || !data.phone ||!data.password ||!data.fullName || !data.address){
+alert("all fields are required");
+}
+try {
+  const res=await api("post","auth/signup/hospital-staff",{
+    name:data.fullName,
+    email:data.email,
+    phone:data.phone,
+    password:data.password,
+    address:data.address,
+    hospital_id:data.hospital_id
+  })
+  if(res.status=200 || res.status==201){
+  alert("Staff signup done");
+  navigate("/");
+  }
+else{
+    alert("Signup failed");
+}
+} catch (error) {
+  console.log("Staff Signup error, Error:",error);
+}
+setIsLoading(false);
+}
     const validatePassword = (pass) => {
         return {
             length: pass.length >= 6,
@@ -279,8 +396,11 @@ const Signup = ({ onRegister }) => {
     text-slate-600 dark:text-slate-300
     hover:bg-slate-200 dark:hover:bg-slate-700"
                         >Back</button>
-                        <button disabled={!isPasswordValid || !isEmailValid || isLoading} className={buttonPrimary + " flex-[2]"}>
+                        {/* <button disabled={!isPasswordValid || !isEmailValid || isLoading} className={buttonPrimary + " flex-[2]"}>
                             {isLoading ? <Loader2 className="animate-spin" /> : "Verify Email"}
+                        </button> */}
+                         <button onClick={handleSingup}  className={buttonPrimary + " flex-[2]"}>
+                            {isLoading ? <Loader2 className="animate-spin" /> : "Signup"}
                         </button>
                     </div>
                 </form>

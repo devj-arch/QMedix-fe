@@ -57,15 +57,16 @@ export default function App() {
         darkMode={darkMode}
         setDarkMode={setDarkMode}
       />
-  <Routes>
-    <Route path="/" element={<Home />} />
-    <Route path="/login" element={<Login />} />
-    <Route path="/signup" element={<Signup />} />
-   <Route path="/dashboard/patient" element={<PatientDashboard />} />
-   <Route path="/dashboard/patient" element={<DoctorDashboard />} />
-   <Route path="/dashboard/admin" element={<AdminDashboard />} />
-   <Route path="/dashboard/reception" element={<ReceptionDashboard />} />
-    </Routes>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        <Route path="/patient/dashboard" element={<PatientDashboard />} />
+        <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/reception/dashboard" element={<ReceptionDashboard />} />
+      </Routes>
       {/* <main className="max-w-7xl mx-auto px-6 py-12">
         {view === 'HOME' && <Home onNavigate={setView} />}
         {view === 'LOGIN' && <Login onLogin={handleLogin} />}

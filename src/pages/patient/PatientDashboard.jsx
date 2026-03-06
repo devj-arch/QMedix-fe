@@ -1,50 +1,109 @@
-import { useEffect, useState } from "react";
-import DashboardHeader from "../../components/patient/DashboardHeader";
-import ActiveAppointments from "../../components/patient/ActiveAppointments";
-import AppointmentHistory from "../../components/patient/AppointmentHistory";
-import api from "../../services/apiWrapper";
+import React, { useState, useEffect } from 'react';
+import { RefreshCcw, Plus, Ticket, Loader2 } from 'lucide-react';
 
-export default function PatientDashboard() {
+// Import your modular components
+import PatientHeader from '../../components/patient/PatientHeader';
+import LiveQueueCard from '../../components/patient/LiveQueueCard';
+import HistoryTable from '../../components/patient/HistoryTable';
 
-  const [activeAppointments,setActiveAppointments] = useState([]);
-  const [history,setHistory] = useState([]);
-  const [notifications,setNotifications] = useState([]);
+const API_BASE_URL = "http://localhost:5500"; 
 
-  const fetchDashboard = async () => {
+export default function PatientDashboard({ user, isDark, toggleTheme, onLogout }) {
+  const [queueData, setQueueData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    try {
-
-      const activeRes = await api("get","patient/appointments/active");
-      const historyRes = await api("get","patient/appointments/history");
-      const notificationRes = await api("get","patient/notifications");
-
-      setActiveAppointments(activeRes.data || []);
-      setHistory(historyRes.data || []);
-      setNotifications(notificationRes.data || []);
-
-    } catch(err){
-      console.log("Dashboard fetch error",err);
+  // Simulated data fetch - this is where your apiWrapper logic will go later
+  const loadData = async () => {
+    // FIX: Turn off loading if there is no user
+    if (!user) {
+      setLoading(false);
+      return; 
     }
-
+    
+    setLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setQueueData([
+        { id: '1', hospital_name: 'Apollo Central', speciality: 'Cardiology', doctor_name: 'Dr. Aristhoth', token_number: 'Q-042', serving_token: 'Q-038', isEmergency: true, status: 'Waiting' },
+        { id: '2', hospital_name: 'St. Marys Medical', speciality: 'Neurology', doctor_name: 'Dr. Mike Ross', token_number: 'B-012', serving_token: 'B-011', isEmergency: false, status: 'In-Progress' }
+      ]);
+    } catch (err) {
+      console.error("Failed to fetch queue data:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(()=>{
-    fetchDashboard();
-  },[]);
+  // Load data when the component mounts or the user changes
+  useEffect(() => { 
+    loadData(); 
+  }, [user]);
 
+  // Handle removing a cancelled appointment from the local state
+  const handleCancel = (id) => {
+    setQueueData(prev => prev.filter(a => a.id !== id));
+    // Here you would also call your API to cancel it in the database
+  };
+
+  // 1. Loading State
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-40">
+        <Loader2 className="animate-spin text-blue-600 mb-4" size={48} />
+        <p className="font-black text-[10px] uppercase tracking-[0.4em] text-slate-400 animate-pulse">Establishing Secure Uplink...</p>
+      </div>
+    );
+  }
+
+  // 2. Main Dashboard Render
   return (
-
-    <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
-
-      <DashboardHeader
-        activeCount={activeAppointments.length}
-        notifications={notifications}
+    <div className="space-y-16 pb-8">
+      
+      {/* Improvised Patient Header */}
+      <PatientHeader 
+        user={user} 
+        activeCount={queueData.length} 
+        isDark={isDark} 
+        toggleTheme={toggleTheme} 
+        onLogout={onLogout} 
       />
 
-      <ActiveAppointments appointments={activeAppointments}/>
+      {/* Active Overview Section */}
+      <section>
+        <div className="flex items-center justify-between mb-8 px-2">
+          <div>
+            <h1 className="text-5xl font-black tracking-tighter dark:text-white leading-none mb-1 uppercase">Portal</h1>
+            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.4em]">Aggregated Live Sessions</p>
+          </div>
+          <div className="flex gap-4">
+             <button onClick={loadData} className="p-3.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl shadow-sm text-slate-400 hover:text-blue-600 transition-all">
+               <RefreshCcw size={20} />
+             </button>
+             <button onClick={() => window.location.hash = '#/book'} className="bg-blue-600 text-white px-8 py-3.5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all flex items-center group">
+               <Plus size={20} className="mr-2 group-hover:rotate-90 transition-transform" /> New Booking
+             </button>
+          </div>
+        </div>
 
-      <AppointmentHistory history={history}/>
+        {/* Live Queue Cards Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {queueData.map(app => (
+            <LiveQueueCard key={app.id} app={app} onCancel={handleCancel} />
+          ))}
+          
+          {/* Empty State Fallback */}
+          {queueData.length === 0 && (
+            <div className="col-span-full py-24 text-center border-4 border-dashed border-slate-100 dark:border-slate-800 rounded-[3rem] animate-pulse">
+               <Ticket size={48} className="mx-auto text-slate-200 dark:text-slate-700 mb-4 opacity-40" />
+               <p className="font-black text-slate-400 uppercase tracking-widest text-xs">No active medical sessions found</p>
+            </div>
+          )}
+        </div>
+      </section>
 
+      {/* History Table Component */}
+      <HistoryTable />
+      
     </div>
   );
 }

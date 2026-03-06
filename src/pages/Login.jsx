@@ -17,20 +17,19 @@ const inputStyle =
 const buttonPrimary =
   "flex items-center justify-center bg-blue-600 text-white py-3 px-6 rounded-xl font-bold hover:bg-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50";
 
-export default function Login() {
+export default function Login({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const roles = [
     { id: "patient", name: "Patient" },
     { id: "hospital", name: "Hospital" },
-    { id: "doctor", name: "Dcotor" },
+    { id: "doctor", name: "Doctor" },
     { id: "hospital-staff", name: "Staff" }
   ]
   const [role, setRole] = useState("");
   const handleLogin = async (email, password) => {
     if (!email || !password || !role) {
-      alert("all fields are required");
+      alert("All fields are required");
       return;
     }
 
@@ -41,27 +40,17 @@ export default function Login() {
       });
 
       if (res.status === 200 || res.status === 201) {
-        alert(`${role} Login done`);
-
-        if (role === "patient") {
-          navigate("/patient/dashboard");
-        }
-        else if (role === "doctor") {
-          navigate("/doctor/dashboard");
-        }
-        else if (role === "hospital") {
-          navigate("/hospital/dashboard");
-        }
-        else {
-          navigate("/staff/dashboard");
-        }
+        // 2. INSTEAD OF NAVIGATING HERE, PASS THE DATA TO APP.JSX!
+        // Pass a user object so App.jsx knows exactly who logged in.
+        // (If your backend sends user data in res.data, use that instead!)
+        onLogin({ email: email, role: role });
 
       } else {
-        alert("login failed");
+        alert("Login failed");
       }
-
     } catch (error) {
       console.log(`${role} Login Error:`, error);
+      alert("Invalid credentials.");
     }
 
     setLoading(false);

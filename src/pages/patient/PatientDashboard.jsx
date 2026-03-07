@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCcw, Plus, Ticket, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Import your modular components
 import PatientHeader from '../../components/patient/PatientHeader';
@@ -10,6 +11,7 @@ import api from "../../services/apiWrapper.js";
 export default function PatientDashboard({ user, isDark, toggleTheme, onLogout }) {
   const [queueData, setQueueData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Simulated data fetch - this is where your apiWrapper logic will go later
   const loadData = async () => {
@@ -106,7 +108,7 @@ export default function PatientDashboard({ user, isDark, toggleTheme, onLogout }
              <button onClick={loadData} className="p-3.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl shadow-sm text-slate-400 hover:text-blue-600 transition-all">
                <RefreshCcw size={20} />
              </button>
-             <button onClick={() => window.location.hash = '#/book'} className="bg-blue-600 text-white px-8 py-3.5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all flex items-center group">
+             <button onClick={() => navigate('/patient/book')} className="bg-blue-600 text-white px-8 py-3.5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all flex items-center group">
                <Plus size={20} className="mr-2 group-hover:rotate-90 transition-transform" /> New Booking
              </button>
           </div>

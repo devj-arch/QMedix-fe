@@ -10,6 +10,7 @@ import PatientDashboard from "./pages/patient/PatientDashboard";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ReceptionDashboard from "./pages/reception/ReceptionDashboard";
+import BookAppointment from "./pages/patient/BookAppointment";
 
 import { initialUsers } from "./services/supabaseClient";
 
@@ -84,6 +85,10 @@ export default function App() {
         <Route 
           path="/staff/dashboard" 
           element={user ? <ReceptionDashboard user={user} /> : <Navigate to="/login" replace />} 
+        />
+        <Route 
+          path="/patient/book" 
+          element={user ? <BookAppointment user={user} /> : <Navigate to="/login" replace />} 
         />
       </Routes>
 

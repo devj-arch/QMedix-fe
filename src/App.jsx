@@ -12,11 +12,11 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ReceptionDashboard from "./pages/reception/ReceptionDashboard";
 import BookAppointment from "./pages/patient/BookAppointment";
 
-import { initialUsers } from "./services/supabaseClient";
+import { supabase } from "./services/supabaseClient";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [usersDb, setUsersDb] = useState(initialUsers);
+  const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
@@ -28,18 +28,37 @@ export default function App() {
   const handleRegister = (newUser) => {
     setUsersDb([...usersDb, newUser]);
     alert("Registration successful! Please login with your new account.");
-    navigate('/login'); 
+    navigate('/login');
   };
 
   const handleLogin = (userObj) => {
-    setUser(userObj); 
-    
+    setUser(userObj);
+
     if (userObj.role === 'hospital-staff') {
       navigate('/staff/dashboard');
     } else {
-      navigate(`/${userObj.role}/dashboard`); 
+      navigate(`/${userObj.role}/dashboard`);
     }
   };
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        // Starting with patients only for Google Auth
+        setUser({ ...session.user, role: 'patient' });
+      }
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setUser({ ...session.user, role: 'patient' });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (darkMode) {
@@ -55,14 +74,14 @@ export default function App() {
     <div className="min-h-screen font-sans transition-colors duration-500 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       <Navbar
         user={user}
-        onLogout={() => { 
+        onLogout={() => {
           setUser(null);
-          navigate('/login'); 
+          navigate('/login');
         }}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
       />
-      
+
       <Routes>
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<Home />} />
@@ -70,25 +89,25 @@ export default function App() {
         <Route path="/signup" element={<Signup onRegister={handleRegister} />} />
 
         {/* PROTECTED ROUTES */}
-        <Route 
-          path="/patient/dashboard" 
-          element={user ? <PatientDashboard user={user} isDark={darkMode} toggleTheme={() => setDarkMode(!darkMode)} /> : <Navigate to="/login" replace />} 
+        <Route
+          path="/patient/dashboard"
+          element={user ? <PatientDashboard user={user} isDark={darkMode} toggleTheme={() => setDarkMode(!darkMode)} /> : <Navigate to="/login" replace />}
         />
-        <Route 
-          path="/doctor/dashboard" 
-          element={user ? <DoctorDashboard user={user} /> : <Navigate to="/login" replace />} 
+        <Route
+          path="/doctor/dashboard"
+          element={user ? <DoctorDashboard user={user} /> : <Navigate to="/login" replace />}
         />
-        <Route 
-          path="/hospital/dashboard" 
-          element={user ? <AdminDashboard user={user} /> : <Navigate to="/login" replace />} 
+        <Route
+          path="/hospital/dashboard"
+          element={user ? <AdminDashboard user={user} /> : <Navigate to="/login" replace />}
         />
-        <Route 
-          path="/staff/dashboard" 
-          element={user ? <ReceptionDashboard user={user} /> : <Navigate to="/login" replace />} 
+        <Route
+          path="/staff/dashboard"
+          element={user ? <ReceptionDashboard user={user} /> : <Navigate to="/login" replace />}
         />
-        <Route 
-          path="/patient/book" 
-          element={user ? <BookAppointment user={user} /> : <Navigate to="/login" replace />} 
+        <Route
+          path="/patient/book"
+          element={user ? <BookAppointment user={user} /> : <Navigate to="/login" replace />}
         />
       </Routes>
 

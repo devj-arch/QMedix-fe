@@ -13,14 +13,13 @@ import ReceptionDashboard from "./pages/reception/ReceptionDashboard";
 import BookAppointment from "./pages/patient/BookAppointment";
 import { AuthProvider } from './context/authContext';
 import { supabase } from "./services/supabaseClient";
-import { useAuth } from './context/authContext';
+
 export default function App() {
-  
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
-  const {user}=useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,13 +31,13 @@ export default function App() {
     navigate('/login');
   };
 
-  const handleLogin = () => {
-    
+  const handleLogin = (userObj) => {
+    setUser(userObj);
 
-    if (user.role === 'hospital-staff') {
+    if (userObj.role === 'hospital-staff') {
       navigate('/staff/dashboard');
     } else {
-      navigate(`/patient/dashboard`);
+      navigate(`/${userObj.role}/dashboard`);
     }
   };
   useEffect(() => {

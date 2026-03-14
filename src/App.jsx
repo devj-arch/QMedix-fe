@@ -71,7 +71,7 @@ export default function App() {
   }, [darkMode]);
 
   return (
-    <div className="min-h-screen font-sans transition-colors duration-500 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen font-sans transition-colors duration-500 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 w-full max-w-[100vw] overflow-x-hidden">
       <Navbar
         user={user}
         onLogout={() => {
@@ -84,7 +84,7 @@ export default function App() {
 <AuthProvider>
       <Routes>
         {/* PUBLIC ROUTES */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home user={user} loading={loading} />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/signup" element={<Signup onRegister={handleRegister} />} />
 

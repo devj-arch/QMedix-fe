@@ -1,54 +1,85 @@
 import React from 'react';
-import { Hospital, Trash2, Users, Clock } from 'lucide-react';
+import { Hospital, Trash2, Users, Clock, AlertCircle } from 'lucide-react';
 
 export default function LiveQueueCard({ app, onCancel }) {
+  // calculation logic for position and wait time
   const servingNum = parseInt(app.serving_token?.split('-')[1]) || 0;
   const myNum = parseInt(app.token_number?.split('-')[1]) || 0;
-  const position = myNum - servingNum;
+  
+  // fallback if the position calculates as negative
+  const position = myNum > servingNum ? myNum - servingNum : 0; 
   const waitEstimate = position * 12; // 12min average wait
+  const isEmergency = app.isEmergency || false;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 p-8 shadow-sm hover:shadow-xl transition-all relative overflow-hidden group animate-in slide-in-from-bottom-4 duration-500">
-      <div className="absolute top-0 right-0 p-8 opacity-5"><Hospital size={80} className="text-slate-900 dark:text-white -rotate-12" /></div>
+    <div className={`relative p-6 rounded-2xl border bg-white dark:bg-slate-900 shadow-sm transition-all hover:shadow-md overflow-hidden animate-in slide-in-from-bottom-4 duration-500
+      ${isEmergency ? 'border-red-200 dark:border-red-900/50' : 'border-slate-200 dark:border-slate-800'}`}>
       
+      {/* Subtle background icon */}
+      <div className="absolute top-0 right-0 p-6 opacity-[0.03] pointer-events-none">
+        <Hospital size={100} className="text-slate-900 dark:text-white -rotate-12" />
+      </div>
+
       <div className="relative z-10">
-        <div className="flex justify-between items-start mb-6">
-          <div>
+        {/* Header: Title, Emergency, Delete */}
+        <div className="flex justify-between items-start mb-5">
+          <div className="pr-4">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-black text-slate-900 dark:text-white text-xl tracking-tight leading-none">{app.hospital_name}</h3>
-              {app.isEmergency && (
-                <div className="bg-red-500 text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full animate-pulse shadow-lg shadow-red-500/20">Emergency Flag</div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight line-clamp-1">
+                {app.hospital_name}
+              </h3>
+              {isEmergency && (
+                <span className="bg-red-500 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center shadow-sm whitespace-nowrap">
+                  <AlertCircle size={10} className="mr-1" /> Emergency
+                </span>
               )}
             </div>
-            <p className="text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-widest">{app.speciality} • {app.doctor_name}</p>
+            <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
+              {app.speciality} • Dr. {app.doctor_name}
+            </p>
           </div>
-          <button onClick={() => onCancel(app.id)} className="p-2 text-slate-300 hover:text-red-500 transition-all"><Trash2 size={18} /></button>
+          <button 
+            onClick={() => onCancel(app.id)} 
+            className="text-slate-400 hover:text-red-500 transition-colors shrink-0"
+            title="Cancel Appointment"
+          >
+            <Trash2 size={18} />
+          </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-inner">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 text-center">Your Token</p>
-            <p className="text-4xl font-black text-slate-900 dark:text-white text-center">{app.token_number}</p>
+        {/* Token Display Grid: Scaled down from text-4xl to text-2xl */}
+        <div className="grid grid-cols-2 gap-3 mb-5">
+          <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Your Token</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white">{app.token_number || "Pending"}</p>
           </div>
-          <div className="bg-blue-600 p-5 rounded-3xl shadow-lg shadow-blue-500/20 text-white">
-            <p className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1 text-center">Serving</p>
-            <p className="text-4xl font-black text-center">{app.serving_token}</p>
+          <div className="bg-blue-600 dark:bg-blue-500 p-3 rounded-xl shadow-md shadow-blue-500/20 text-white flex flex-col items-center justify-center">
+            <p className="text-[10px] font-bold text-blue-100 uppercase tracking-widest mb-1">Now Serving</p>
+            <p className="text-2xl font-black">{app.serving_token || "N/A"}</p>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-6 border-t border-slate-50 dark:border-slate-700">
-          <div className="flex flex-col gap-3">
-             <div className="flex items-center text-slate-500 dark:text-slate-400">
-                <Users size={16} className="mr-2 text-blue-500" />
-                <span className="text-xs font-black uppercase">Queue Pos: <span className="text-blue-600 dark:text-blue-400 font-black">#{position > 0 ? position : '0'}</span></span>
-             </div>
-             <div className="flex items-center text-slate-500 dark:text-slate-400">
-                <Clock size={16} className="mr-2 text-blue-500" />
-                <span className="text-xs font-black uppercase">Est. Wait: <span className="text-blue-600 dark:text-blue-400 font-black">{waitEstimate}m</span></span>
-             </div>
+        {/* Footer Details: Queue Pos, Wait Time, Status */}
+        <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex gap-4">
+            <div className="flex items-center text-slate-600 dark:text-slate-400">
+              <Users size={14} className="mr-1.5 text-slate-400" />
+              <span className="text-xs font-semibold">
+                Pos: <span className="text-slate-900 dark:text-white">{position}</span>
+              </span>
+            </div>
+            <div className="flex items-center text-slate-600 dark:text-slate-400">
+              <Clock size={14} className="mr-1.5 text-slate-400" />
+              <span className="text-xs font-semibold">
+                Wait: <span className="text-slate-900 dark:text-white">~{waitEstimate}m</span>
+              </span>
+            </div>
           </div>
-          <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${
-            app.status === 'in-progress' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'
+          
+          <div className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest ${
+            app.status?.toLowerCase() === 'in-progress' || app.status?.toLowerCase() === 'in progress'
+              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' 
+              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
           }`}>
             {app.status}
           </div>

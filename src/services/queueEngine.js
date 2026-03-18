@@ -14,6 +14,22 @@ class QueueEngine {
     return appointments;
   }
 
+  sortWaitingQueue(h, d) {
+    const doctorQueue = this.queues.get(h)?.get(d);
+    if (!doctorQueue) return;
+
+    doctorQueue.waiting.sort((a, b) => {
+
+      // emergency first
+      if (a.is_emergency !== b.is_emergency) {
+        return b.is_emergency - a.is_emergency;
+      }
+
+      // then by created_at
+      return new Date(a.created_at) - new Date(b.created_at);
+    });
+  }
+
   rebuildPositions(hospitalId, doctorId) {
     const queue = this.getDoctorQueue(hospitalId, doctorId);
     queue.forEach((app, index) => {
@@ -52,7 +68,12 @@ class QueueEngine {
       doctorQueue[app.status].push(app);
     });
 
-    this.rebuildPositions(hospitalId, doctorId);
+    this.queues.forEach((hospital, hospitalId) => {
+      hospital.forEach((_, doctorId) => {
+        this.sortWaitingQueue(hospitalId, doctorId);
+        this.rebuildPositions(hospitalId, doctorId);
+      });
+    });
   }
 
   handleInsert(app) {
@@ -77,6 +98,10 @@ class QueueEngine {
     }
 
     hospital.get(d)[app.status].push(app);
+
+    if (app.status === "waiting") {
+      this.sortWaitingQueue(h, d);
+    }
     this.rebuildPositions(h, d);
   }
 
@@ -104,6 +129,9 @@ class QueueEngine {
     }
 
     doctorQueue[newApp.status].push(newApp);
+    if (newApp.status === "waiting") {
+      this.sortWaitingQueue(h, d);
+    }
     this.rebuildPositions(h, d);
     this.appointments.set(newApp.appointment_id, newApp);
 

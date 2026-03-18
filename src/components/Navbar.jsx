@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Activity, LogOut, Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import api from "../services/apiWrapper";
 const buttonPrimary =
   "flex items-center justify-center bg-blue-600 text-white py-3 px-6 rounded-xl font-bold hover:bg-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50";
 
@@ -9,12 +9,26 @@ const Navbar = ({ user, onLogout, darkMode, setDarkMode }) => {
   const navigate = useNavigate();
   // State to control the mobile menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  //  setInterval=()=>{
+
+  //  }
 
   const handleNav = (path) => {
     navigate(path);
     setIsMenuOpen(false);
   };
+const handleLogout=async()=>{
+  try {
+    const res=await api("post","auth/logout");
 
+    if(res.status===200) {
+      alert("Logged out! Kindly login again to continue")
+      navigate("/");
+    }
+  } catch (error) {
+    console.error("Logout error:",error);
+  }
+}
   return (
     <>
       <nav
@@ -111,10 +125,10 @@ const Navbar = ({ user, onLogout, darkMode, setDarkMode }) => {
                 >
                   {darkMode ? "☀️" : "🌙"}
                 </button>
-
+              {user &&
                 <button
                   onClick={() => {
-                    onLogout();
+                    handleLogout();
                     handleNav("/");
                   }}
                   className="p-2 rounded-lg transition-all
@@ -124,6 +138,7 @@ const Navbar = ({ user, onLogout, darkMode, setDarkMode }) => {
                 >
                   <LogOut size={18} />
                 </button>
+}
               </div>
             )}
           </div>

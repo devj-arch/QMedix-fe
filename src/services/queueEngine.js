@@ -1,4 +1,4 @@
-import api from "./apiWrapper"
+import api from "./apiWrapper.js"
 
 class QueueEngine {
   constructor() {

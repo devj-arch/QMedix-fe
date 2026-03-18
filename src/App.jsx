@@ -13,7 +13,7 @@ import ReceptionDashboard from "./pages/reception/ReceptionDashboard";
 import BookAppointment from "./pages/patient/BookAppointment";
 import { AuthProvider } from './context/authContext';
 import { supabase } from "./services/supabaseClient";
-
+import api from './services/apiWrapper';
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,22 +24,36 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const isDashboard = location.pathname.includes('/dashboard');
-
-  const handleRegister = (newUser) => {
-    setUsersDb([...usersDb, newUser]);
-    alert("Registration successful! Please login with your new account.");
-    navigate('/login');
-  };
-
-  const handleLogin = (userObj) => {
-    setUser(userObj);
-
-    if (userObj.role === 'hospital-staff') {
-      navigate('/staff/dashboard');
-    } else {
-      navigate(`/${userObj.role}/dashboard`);
+  const fetchUser = async () => {
+    try {
+      const res = await api("get", "me");
+      console.log(res.data);
+      setUser(res.data);
+    } catch(error) {
+      setUser(null);
+      console.error(error);
     }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+  // const handleRegister = (newUser) => {
+  //   setUsersDb([...usersDb, newUser]);
+  //   alert("Registration successful! Please login with your new account.");
+  //   navigate('/login');
+  // };
+
+  // const handleLogin = (userObj) => {
+  //   setUser(userObj);
+
+  //   if (userObj.role === 'hospital-staff') {
+  //     navigate('/staff/dashboard');
+  //   } else {
+  //     navigate(`/${userObj.role}/dashboard`);
+  //   }
+  // };
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -85,8 +99,8 @@ export default function App() {
       <Routes>
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<Home user={user} loading={loading} />} />
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route path="/signup" element={<Signup onRegister={handleRegister} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
         {/* PROTECTED ROUTES */}
         <Route

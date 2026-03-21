@@ -7,7 +7,7 @@ import HistoryTable from '../../components/patient/HistoryTable';
 import api from '../../services/apiWrapper.js';
 import queueEngine from '../../services/queueEngine.js';
 import { createAppointmentChannel, removeChannel } from '../../services/realtimeService.js';
-
+import { useAuth } from '../../context/authContext.jsx';
 function normalise(appointment) {
   const status   = appointment.status; // 'waiting' | 'in_progress' | 'pending'
   const isActive = status === 'waiting' || status === 'in_progress';
@@ -41,7 +41,7 @@ function normalise(appointment) {
   };
 }
 
-export default function PatientDashboard({ user }) {
+export default function PatientDashboard({isDark}) {
   const [liveData,    setLiveData]    = useState([]); // waiting / in_progress
   const [pendingData, setPendingData] = useState([]); // upcoming pending bookings
   const [historyData, setHistoryData] = useState([]); // past appointments (booked_for < now)
@@ -50,14 +50,14 @@ export default function PatientDashboard({ user }) {
   const pollingRef  = useRef(null);
   const channelRef  = useRef(null);
   const navigate    = useNavigate();
-
+  const {user}=useAuth();
+// console.log(user);
   const fetchPatientAppointments = useCallback(async () => {
-    if (!user) { setLoading(false); return; }
 
     try {
       const res = await api('GET', 'patient/get-appointments');
       const raw = res.data?.data ?? [];
-
+      // console.log(res.data);
       const now = new Date();
 
       const history = raw.filter(a => new Date(a.booked_for) < now);
@@ -96,8 +96,12 @@ export default function PatientDashboard({ user }) {
   }, [user]);
 
   useEffect(() => {
-    if (!user) return;
+ if (!user) {
+
+    return;
+  }
     queueEngine.init().then(() => {
+       console.log("Queue engine initialized");
       fetchPatientAppointments();
     });
 

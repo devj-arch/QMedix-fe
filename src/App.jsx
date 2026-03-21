@@ -26,9 +26,9 @@ export default function App() {
   const isDashboard = location.pathname.includes('/dashboard');
   const fetchUser = async () => {
     try {
-      const res = await api("get", "me");
+      const res = await api("get", "auth/me");
       console.log(res.data);
-      setUser(res.data);
+      setUser(res.data.user.profile);
     } catch(error) {
       setUser(null);
       console.error(error);
@@ -83,9 +83,9 @@ export default function App() {
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
-const onLogin=()=>{
+// const onLogin=()=>{
 
-}
+// }
   return (
     <div className="min-h-screen font-sans transition-colors duration-500 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 w-full max-w-[100vw] overflow-x-hidden">
       <Navbar
@@ -101,13 +101,13 @@ const onLogin=()=>{
       <Routes>
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<Home user={user} loading={loading} />} />
-        <Route path="/login" element={<Login onLogin={handleLogin}/>} />
+        <Route path="/login" element={user ?<Navigate to="/" replace /> :<Login onLogin={handleLogin}/>} />
         <Route path="/signup" element={<Signup onRegister={handleRegister} />} />
 
         {/* PROTECTED ROUTES */}
         <Route
           path="/patient/dashboard"
-          element={user ? <PatientDashboard user={user} isDark={darkMode} toggleTheme={() => setDarkMode(!darkMode)} /> : <Navigate to="/login" replace />}
+          element={<PatientDashboard  isDark={darkMode} toggleTheme={() => setDarkMode(!darkMode)} />}
         />
         <Route
           path="/doctor/dashboard"

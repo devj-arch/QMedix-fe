@@ -9,7 +9,8 @@ class QueueEngine {
 
   async init() {
     const res = await api("GET", "/global/appointments/today");
-    const appointments = res.data;
+    const appointments = res.data?.data;
+    // console.log("res from queue engine",res.data);
     this.buildQueues(appointments);
     return appointments;
   }

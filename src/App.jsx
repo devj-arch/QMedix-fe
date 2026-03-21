@@ -103,6 +103,9 @@ export default function App() {
         <Route path="/" element={<Home user={user} loading={loading} />} />
         <Route path="/login" element={user ?<Navigate to="/" replace /> :<Login onLogin={handleLogin}/>} />
         <Route path="/signup" element={<Signup onRegister={handleRegister} />} />
+        <Route path="/doctor/dashboard" element={<DoctorDashboard user={user} />} />
+        <Route path="/hospital/dashboard" element={<AdminDashboard user={user} />} />
+        <Route path="/staff/dashboard" element={<ReceptionDashboard user={user} />} />
 
         {/* PROTECTED ROUTES */}
         <Route

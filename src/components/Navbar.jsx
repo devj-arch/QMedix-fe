@@ -39,7 +39,7 @@ const Navbar = ({ user, onLogout, darkMode, setDarkMode }) => {
         border-slate-100 dark:border-slate-800"
       >
         <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
-          
+
           {/* LEFT SIDE */}
           <div className="flex items-center space-x-12">
             <div
@@ -61,22 +61,22 @@ const Navbar = ({ user, onLogout, darkMode, setDarkMode }) => {
               <button onClick={() => handleNav("/FAQ")} className="font-black text-sm uppercase tracking-widest transition-colors text-slate-400 dark:text-slate-500 hover:text-blue-600">FAQ</button>
             </div>
           </div>
-           {user?.role === "doctor" && user?.status==="PENDING" && (
+          {user?.role === "doctor" && user?.status === "PENDING" && (
             <>
-  <p onClick={()=>{
-     navigate("/FAQ", {
-      state: {
-        role: "doctor",
-        openQuestion: "approval"
-      }
-    });
-  }} className="text-[12px] text-amber-500 font-black uppercase tracking-widest mt-1 cursor-pointer hover:underline">
-    Approval from hospital is pending!! <br></br>
-    Click here to know more
-  </p>
-  </>
+              <p onClick={() => {
+                navigate("/FAQ", {
+                  state: {
+                    role: "doctor",
+                    openQuestion: "approval"
+                  }
+                });
+              }} className="text-[12px] text-amber-500 font-black uppercase tracking-widest mt-1 cursor-pointer hover:underline">
+                Approval from hospital is pending!! <br></br>
+                Click here to know more
+              </p>
+            </>
 
-)}
+          )}
 
           {/* RIGHT SIDE (Desktop Only) */}
           <div className="hidden md:flex items-center space-x-6">
@@ -86,11 +86,11 @@ const Navbar = ({ user, onLogout, darkMode, setDarkMode }) => {
                 <button onClick={() => handleNav("/signup")} className={buttonPrimary + " !py-2.5 !px-5"}>Sign Up</button>
                 <button onClick={() => setDarkMode(!darkMode)} className="ml-4 px-3 py-2 rounded-lg transition-colors bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                   {darkMode ? "☀️ Light" : "🌙 Dark"}
-                </button>           
+                </button>
               </div>
             ) : (
               <div className="flex items-center space-x-5 border-l pl-6 border-slate-100 dark:border-slate-800">
-                
+
                 {/* THE BELL ICON */}
                 <button className="relative p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   <Bell size={22} />
@@ -98,20 +98,22 @@ const Navbar = ({ user, onLogout, darkMode, setDarkMode }) => {
                 </button>
 
                 {/* THE USER PROFILE & FACE ICON */}
-                <div className="flex items-center gap-3 border border-slate-100 dark:border-slate-800/50 p-1.5 rounded-full bg-slate-50/50 dark:bg-slate-800/30">
-                  <div className="bg-slate-200 dark:bg-slate-800 p-2.5 rounded-full text-slate-500 dark:text-slate-400 border border-white dark:border-slate-700 shadow-inner">
+                <button
+                  onClick={() => handleNav("/profile")}
+                  className="flex items-center gap-3 border border-slate-100 dark:border-slate-800/50 p-1.5 rounded-full bg-slate-50/50 dark:bg-slate-800/30 hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-blue-200 dark:hover:border-blue-800/50 transition-all text-left group"
+                >
+                  <div className="bg-slate-200 dark:bg-slate-800 p-2.5 rounded-full text-slate-500 dark:text-slate-400 border border-white dark:border-slate-700 shadow-inner group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     <UserRound size={18} />
                   </div>
                   <div className="text-right pr-2">
-                    <p className="text-sm font-black leading-none text-slate-900 dark:text-white">
+                    <p className="text-sm font-black leading-none text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {user.name || "User"}
                     </p>
                     <p className="text-[9px] text-blue-500 dark:text-blue-400 font-black uppercase tracking-widest mt-1">
                       {user.role}
                     </p>
-                   
                   </div>
-                </div>
+                </button>
 
                 <button onClick={() => setDarkMode(!darkMode)} className="px-3 py-2 rounded-lg transition-colors bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                   {darkMode ? "☀️" : "🌙"}
@@ -137,7 +139,7 @@ const Navbar = ({ user, onLogout, darkMode, setDarkMode }) => {
                 <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
               </button>
             )}
-            
+
             <button onClick={() => setDarkMode(!darkMode)} className="px-3 py-2 rounded-lg transition-colors bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
               {darkMode ? "☀️" : "🌙"}
             </button>
@@ -164,15 +166,18 @@ const Navbar = ({ user, onLogout, darkMode, setDarkMode }) => {
             ) : (
               <div className="flex flex-col space-y-4">
                 {/* MOBILE USER FACE ICON */}
-                <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                  <div className="bg-slate-200 dark:bg-slate-800 p-2.5 rounded-full text-slate-500 dark:text-slate-400 border border-white dark:border-slate-700 shadow-inner">
+                <button
+                  onClick={() => handleNav("/profile")}
+                  className="w-full flex items-center gap-3 bg-slate-50 hover:bg-blue-50 dark:bg-slate-800/50 dark:hover:bg-blue-900/20 p-4 rounded-xl border border-slate-100 hover:border-blue-200 dark:border-slate-800 dark:hover:border-blue-800/50 transition-all text-left group"
+                >
+                  <div className="bg-slate-200 dark:bg-slate-800 p-2.5 rounded-full text-slate-500 dark:text-slate-400 border border-white dark:border-slate-700 shadow-inner group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     <UserRound size={20} />
                   </div>
                   <div>
-                    <p className="text-sm font-black leading-none text-slate-900 dark:text-white">{user.name || "User"}</p>
-                    <p className="text-[9px] text-blue-500 dark:text-blue-400 font-black uppercase tracking-widest mt-1">{user.role}</p>
+                    <p className="text-sm font-black leading-none text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{user.name || "User"}</p>
+                    <p className="text-[9px] text-blue-500 dark:text-blue-400 font-black uppercase tracking-widest mt-1">View Profile</p>
                   </div>
-                </div>
+                </button>
                 {/* MOBILE LOGOUT WIRED UP */}
                 <button onClick={handleLogout} className="font-bold text-center py-3 bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 rounded-xl flex items-center justify-center">
                   <LogOut size={18} className="mr-2" /> Logout

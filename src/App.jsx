@@ -30,7 +30,7 @@ export default function App() {
     try {
       const res = await api("get", "auth/me");
       console.log(res.data);
-      setUser(res.data.user.profile);
+      setUser(res.data.user);
       // console.log(user);
     } catch(error) {
       setUser(null);

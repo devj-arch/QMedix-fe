@@ -2,6 +2,7 @@ import React from 'react';
 import { Stethoscope, Loader2 } from 'lucide-react';
 
 export default function DoctorHeader({ doctorInfo, hospitalInfo, isAvailable, toggling, onToggle }) {
+  console.log(isAvailable);
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#111827] p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
       <div className="flex items-center gap-4">

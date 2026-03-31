@@ -9,7 +9,7 @@ import { createAppointmentChannel, removeChannel } from '../../services/realtime
 import { useHospitals } from '../../data/hospitals';
 import { useDoctors } from '../../data/doctor';
 
-const TOGGLE_COOLDOWN_MS = 60 * 60 * 1000;
+const TOGGLE_COOLDOWN_MS = 5000;
 const TOGGLE_KEY = 'doctor_last_toggle';
 
 function normaliseQueueItem(app, patientMap) {
@@ -39,8 +39,8 @@ export default function DoctorDashboard({ user }) {
 
   const doctorInfo   = getDoctor(doctorId)   ?? {};
   const hospitalInfo = getHospital(hospitalId) ?? {};
-
-  const [isAvailable,    setIsAvailable]    = useState(true);
+// console.log(doctorInfo);
+  const [isAvailable,    setIsAvailable]    = useState(false);
   const [toggling,       setToggling]       = useState(false);
   const [queue,          setQueue]          = useState([]);
   const [currentPatient, setCurrentPatient] = useState(null);
@@ -57,7 +57,11 @@ export default function DoctorDashboard({ user }) {
   const startedAtRef  = useRef(null);
   const channelRef    = useRef(null);
   const patientMapRef = useRef(new Map());
-
+useEffect(() => {
+  if (doctorInfo?.isAvailable !== undefined) {
+    setIsAvailable(doctorInfo.isAvailable);
+  }
+}, [doctorInfo]);
   const buildQueue = useCallback(() => {
     if (!hospitalId || !doctorId) return;
     const raw = queueEngine.getDoctorQueue(hospitalId, doctorId);
@@ -146,12 +150,13 @@ export default function DoctorDashboard({ user }) {
     const started_at   = startedAtRef.current ?? completed_at;
     const remarksStr   = buildRemarksString();
     try {
-      await api('POST', 'doctor/mark-complete', {
+     const res= await api('POST', 'doctor/mark-complete', {
         appointmentId: currentPatient.appointment_id,
-        remarks:       remarksStr,
+        remarks:   remarksStr,
         completed_at,
         started_at,
       });
+      console.log(res.data);
       setCompletedCount(prev => prev + 1);
       setCurrentPatient(null);
       setRemarks({ age: '', medicines: '', diagnosis: '', notes: '' });
@@ -176,9 +181,12 @@ export default function DoctorDashboard({ user }) {
     }
     setToggling(true);
     try {
+      // console.log("Before toggle:", isAvailable);
       await api('POST', 'doctor/toggle-availability');
       setIsAvailable(prev => !prev);
+      // console.log("After toggle:", isAvailable);
       localStorage.setItem(TOGGLE_KEY, Date.now().toString());
+      // window.location.reload();
     } catch (err) {
       console.error('Toggle availability failed:', err);
       alert(err?.response?.data?.message ?? err?.message ?? 'Failed to toggle availability.');
@@ -186,7 +194,51 @@ export default function DoctorDashboard({ user }) {
       setToggling(false);
     }
   };
+if (user?.status==="PENDING")  {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#0B0F19] px-6">
+      
+      <div className="max-w-md w-full text-center p-10 rounded-3xl 
+        bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl
+        border border-slate-200 dark:border-slate-700 shadow-2xl">
 
+        {/* ICON */}
+        <div className="w-16 h-16 mx-auto mb-6 rounded-full 
+          bg-yellow-100 dark:bg-yellow-500/10 flex items-center justify-center">
+          🔒
+        </div>
+
+        {/* TITLE */}
+        <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">
+          Account Pending Approval
+        </h2>
+
+        {/* MESSAGE */}
+        <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 font-medium">
+          Your account is currently under review by the hospital admin.  
+          You will gain access once approved.
+        </p>
+
+        {/* STATUS BADGE */}
+        <div className="inline-block px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest
+          bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400">
+          Pending Approval
+        </div>
+
+        {/* OPTIONAL ACTION */}
+        <div className="mt-6">
+          <button
+            onClick={() => window.location.reload()}
+            className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
+          >
+            Refresh Status
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] p-4 sm:p-6 lg:p-8 w-full max-w-[100vw] overflow-x-hidden transition-colors duration-500">
       <div className="max-w-7xl mx-auto space-y-6">

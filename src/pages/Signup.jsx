@@ -206,7 +206,7 @@ const Signup = ({onRegister}) => {
 
     const handleStaffSignin = async () => {
         setIsLoading(true);
-        if (!data.email || !data.phone || !data.password || !data.fullName || !data.address) {
+        if (!data.email || !data.phone || !data.password || !data.fullName ||!data.hospital_id ) {
             alert("all fields are required");
         }
         try {
@@ -215,7 +215,6 @@ const Signup = ({onRegister}) => {
                 email: data.email,
                 phone: data.phone,
                 password: data.password,
-                address: data.address,
                 hospital_id: data.hospital_id
             })
             if (res.status === 200 || res.status === 201) {

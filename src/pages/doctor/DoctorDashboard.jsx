@@ -14,11 +14,12 @@ const TOGGLE_KEY = 'doctor_last_toggle';
 
 function normaliseQueueItem(app, patientMap) {
   const patient = patientMap.get(app.patient_id) ?? {};
+  const pos = queueEngine.getPatientPosition(app.appointment_id);
   return {
     id:           app.id ?? app.appointment_id,
     appointment_id: app.id ?? app.appointment_id,
     patient_id:   app.patient_id,
-    token:        `Q-${queueEngine.getPatientPosition(app.id ?? app.appointment_id) ?? '?'}`,
+    token: pos ? `Q-${pos}` : '—',
     name:         patient.name  ?? 'Patient',
     age:          patient.age   ?? null,
     dob:          patient.dob   ?? null,

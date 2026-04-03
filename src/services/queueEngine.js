@@ -32,9 +32,17 @@ class QueueEngine {
   }
 
   rebuildPositions(hospitalId, doctorId) {
-    const queue = this.getDoctorQueue(hospitalId, doctorId);
-    queue.forEach((app, index) => {
-        this.positions.set(app.appointment_id, index + 1);
+    const doctorQueue = this.queues.get(hospitalId)?.get(doctorId);
+    if (!doctorQueue) return;
+
+    // clear old
+    [...doctorQueue.in_progress, ...doctorQueue.completed].forEach(app => {
+      this.positions.delete(app.appointment_id);
+    });
+
+    // assign only waiting
+    doctorQueue.waiting.forEach((app, index) => {
+      this.positions.set(app.appointment_id, index + 1);
     });
   }
 

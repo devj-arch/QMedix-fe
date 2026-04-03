@@ -30,7 +30,7 @@ function normalise(appointment) {
     _raw_status:    status,
     _position:      position,
 
-    token_number:  isActive && position ? `Q-${position}` : 'Pending',
+    token_number: position ? `Q-${position}` : 'Pending',
     serving_token: 'N/A', // patched in second pass
 
     status:
@@ -57,6 +57,7 @@ export default function PatientDashboard({user,sDark}) {
     try {
       const res = await api('GET', 'patient/get-appointments');
       const raw = res.data?.data ?? [];
+      queueEngine.buildQueues(raw);
       // console.log(res.data);
       const now = new Date();
 

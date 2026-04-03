@@ -1,4 +1,4 @@
-# QMedix Frontend - Smart Healthcare Queue Management
+# QMedix Frontend - Smart Healthcare Appointment & Queue Management System
 
 [![React](https://img.shields.io/badge/React-19.2-blue?logo=react)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
@@ -33,7 +33,7 @@ QMedix is a healthcare management interface designed to bridge the gap between o
 ---
 
 ## Collaborators
-- Tripti Gupta[https://github.com/Tripti213]
-- Avadhesh Nagar[https://github.com/avadhesh11]
-- Dev Joshi[https://github.com/devj-arch]
-- Tarun Jain[https://github.com/tarundeepakjain]
+- Tripti Gupta(https://github.com/Tripti213)
+- Avadhesh Nagar(https://github.com/avadhesh11)
+- Dev Joshi(https://github.com/devj-arch)
+- Tarun Jain(https://github.com/tarundeepakjain)

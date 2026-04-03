@@ -33,7 +33,7 @@ QMedix is a healthcare management interface designed to bridge the gap between o
 ---
 
 ## Collaborators
-- Tripti Gupta(https://github.com/Tripti213)
-- Avadhesh Nagar(https://github.com/avadhesh11)
-- Dev Joshi(https://github.com/devj-arch)
-- Tarun Jain(https://github.com/tarundeepakjain)
+- [Tripti Gupta](https://github.com/Tripti213)
+- [Avadhesh Nagar](https://github.com/avadhesh11)
+- [Dev Joshi](https://github.com/devj-arch)
+- [Tarun Jain](https://github.com/tarundeepakjain)

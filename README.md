@@ -1,8 +1,19 @@
 # QMedix Frontend - Smart Healthcare Appointment & Queue Management System
 
-[![React](https://img.shields.io/badge/React-19.2-blue?logo=react)](https://react.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
-[![Vite](https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite)](https://vitejs.dev/)
+[![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-7-purple?logo=vite)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow?logo=javascript)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+[![Supabase](https://img.shields.io/badge/Supabase-Realtime-3ECF8E?logo=supabase)](https://supabase.com/)
+[![Realtime](https://img.shields.io/badge/Realtime-Subscriptions-orange)](#)
+[![REST API](https://img.shields.io/badge/API-REST-green)](#)
+
+[![Authentication](https://img.shields.io/badge/Auth-JWT-red)](#)
+[![State Management](https://img.shields.io/badge/State-ContextAPI-blue)](#)
+[![Routing](https://img.shields.io/badge/Routing-ReactRouter-CA4245?logo=react-router)](https://reactrouter.com/)
+
+[![Responsive](https://img.shields.io/badge/UI-Responsive-black)](#)
 
 QMedix is a healthcare management interface designed to bridge the gap between online appointments and walk-in patients. It provides a seamless, real-time experience for patients, doctors, and hospital staff through a unified digital ecosystem.
 
